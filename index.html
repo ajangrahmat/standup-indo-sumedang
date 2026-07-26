@@ -41,12 +41,11 @@ body{
 }
 video{
   position:absolute;
-  left:4%;
-  top:5.5%;
-  width:92%;
-  height:75%;
+  left:4.357%;
+  top:6.1%;
+  width:89.586%;
+  height:74.821%;
   object-fit:cover;
-  transform:scaleX(-1);
   background:#000;
 }
 .frame{
@@ -156,7 +155,7 @@ canvas{
 
 <div class="preview" id="preview">
   <video id="video" autoplay playsinline muted></video>
-  <img src="frame.png" class="frame" id="frameImg">
+  <img src="https://raw.githubusercontent.com/ajangrahmat/standup-indo-sumedang/main/stand-up-indo-sumedang-bg-open-mic.png" class="frame" id="frameImg" crossorigin="anonymous">
   <div class="status" id="status">Meminta akses kamera...</div>
   <div class="result-overlay" id="resultOverlay">
     <img id="resultImg" alt="Hasil foto">
@@ -188,13 +187,13 @@ const flashEl = document.getElementById("flash");
 
 /*
 Koordinat area foto pada hasil 1080x1920.
-Harus sinkron dengan posisi video di CSS (left 4%, top 5.5%, width 92%, height 75%).
-Sesuaikan jika bingkai (frame.png) diganti dengan versi lain.
+Harus sinkron dengan posisi video di CSS (left 4.357%, top 6.1%, width 89.586%, height 74.821%).
+Diambil otomatis dari area transparan pada file twibbon PNG. Sesuaikan jika bingkai diganti versi lain.
 */
-const FRAME_X = 43;   // 4% of 1080
-const FRAME_Y = 106;  // 5.5% of 1920
-const FRAME_W = 994;  // 92% of 1080
-const FRAME_H = 1440; // 75% of 1920
+const FRAME_X = 47;   // matches transparent cutout in the twibbon PNG
+const FRAME_Y = 117;
+const FRAME_W = 968;
+const FRAME_H = 1437;
 
 let streamReady = false;
 
@@ -207,7 +206,7 @@ async function startCamera(){
   setStatus("Meminta akses kamera...");
   try{
     const stream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: "user", width: { ideal: 1280 }, height: { ideal: 720 } },
+      video: { facingMode: { ideal: "environment" }, width: { ideal: 1280 }, height: { ideal: 720 } },
       audio: false
     });
     video.srcObject = stream;
@@ -261,12 +260,8 @@ function takePhoto(){
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // mirror to match the selfie preview
-  ctx.save();
-  ctx.translate(FRAME_X + FRAME_W, FRAME_Y);
-  ctx.scale(-1, 1);
-  drawCoveredVideo(0, 0, FRAME_W, FRAME_H);
-  ctx.restore();
+  // back camera: no mirroring needed
+  drawCoveredVideo(FRAME_X, FRAME_Y, FRAME_W, FRAME_H);
 
   // draw frame overlay on top
   ctx.drawImage(frame, 0, 0, canvas.width, canvas.height);
